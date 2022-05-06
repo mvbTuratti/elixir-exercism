@@ -8,7 +8,7 @@ defmodule Anagram do
     ordened_letters = return_ordered_codepoints(base)
 
     candidates
-    |> Enum.map(fn candidate ->
+    |> Enum.filter(fn candidate ->
         candidate_lower = String.downcase(candidate)
         case candidate_lower do
           ^base ->
@@ -18,7 +18,6 @@ defmodule Anagram do
             |> returns_word_if_equal(ordened_letters, candidate)
         end
       end)
-    |> Enum.filter(&(&1))
   end
 
   defp return_ordered_codepoints(as_string) do
