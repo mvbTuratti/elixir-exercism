@@ -13,7 +13,7 @@ defmodule CollatzConjecture do
 
   defp do_calc(1, number), do: number
   defp do_calc(input, number) do
-    case is_even?(input) do
+    case even?(input) do
       true ->
         input
         |> div(2)
@@ -26,5 +26,5 @@ defmodule CollatzConjecture do
     end
   end
 
-  defp is_even?(num), do: rem(num, 2) == 0
+  defp even?(num), do: rem(num, 2) == 0
 end
