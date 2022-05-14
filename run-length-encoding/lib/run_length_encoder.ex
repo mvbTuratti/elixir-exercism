@@ -7,52 +7,46 @@ defmodule RunLengthEncoder do
   "2A3B4C" => "AABBBCCCC"
   """
   @spec encode(String.t()) :: String.t()
+  def encode(""), do: ""
   def encode(string) do
-    do_encode(string, "", <<>>, 1)
+    do_encode(string, "", nil, 1)
   end
 
-  @spec decode(String.t()) :: String.t()
-  def decode(string) do
-    do_decode(string, "", nil, 0)
-  end
-
-  defp do_encode(<<>>, acc, letter, 1), do: acc <> <<letter>>
-  defp do_encode(<<>>, acc, letter, number) do
-    number = Integer.to_string(number)
-    acc <> number <> <<letter>>
-  end
+  defp do_encode(<<>>, acc, letter, 1), do: "#{acc}#{<<letter>>}"
+  defp do_encode(<<>>, acc, letter, number), do: "#{acc}#{number}#{<<letter>>}"
   defp do_encode(<<char, rest::binary>>, acc, letter, number) do
     cond do
       char === letter ->
-        do_encode(rest, acc, letter, number + 1)
+        do_encode(rest, acc, char, number + 1)
+      !letter ->
+        do_encode(rest, acc, char, 1)
       number === 1 ->
-        do_encode(rest, acc <> <<letter>>, char, 1)
+        do_encode(rest, "#{acc}#{<<letter>>}", char, 1)
       true ->
-        number = Integer.to_string(number)
-        do_encode(rest, acc <> number <> <<letter>>, char, 1)
+        do_encode(rest, "#{acc}#{number}#{<<letter>>}", char, 1)
     end
   end
 
-  defp do_decode(<<>>, acc, _previous_digit, _sum), do: acc
-  defp do_decode(<<char, rest::binary>>, acc, previous_digit, sum) do
-    with {:number, char} <- categorize_char(char),
-         {:sum, number} <- sum_if_both_numbers(char, previous_digit, sum) do
-          do_decode(rest, acc, char, number)
-    else
-      {:not_number, char} ->
-        repeating = for _ <- 0..sum, into: "" , do: <<char>>
-        do_decode(rest, acc <> repeating, char, 0)
-      {:not_sum, number} ->
-        do_decode(rest, acc, char, String.to_integer(<<number>>))
-    end
+
+  @spec decode(String.t()) :: String.t()
+  def decode(string) do
+    string
+    |> String.split(~r/[^0-9]{1,}/, include_captures: true)
+    |> Enum.map(fn x ->
+      case Integer.parse(x) do
+        {num, ""} -> num
+        _ -> x
+      end
+    end)
+    |> do_decode("")
   end
 
-  defp categorize_char(char), do: if char in ?0..?9, do: {:number, char}, else: {:not_number, char}
-
-  defp sum_if_both_numbers(number, previous_char, sum) do
-    case categorize_char(previous_char) do
-      {:number, _char} -> {:sum, sum * 10 + String.to_integer(<<number>>)}
-      {:not_number, _char} -> {:not_sum, number}
-    end
+  defp do_decode([], acc), do: acc
+  defp do_decode([head | remainder], acc) when is_integer(head) do
+    [h | r] = remainder
+    <<c::utf8, rest::binary>> = h
+    new_char = for _ <- 1..head, into: "" , do: <<c>>
+    do_decode(r, acc <> new_char <> rest)
   end
+  defp do_decode([head | remainder], acc), do: do_decode(remainder, acc <> head)
 end
