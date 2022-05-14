@@ -12,7 +12,7 @@ defmodule StringSeries do
   end
 
   defp do_slices(_,size, _, length) when length < size, do: []
-  defp do_slices(word, size, acc, length) when length === size, do: [return_a_combination(size, word) | acc ] |> IO.inspect() |> Enum.reverse()
+  defp do_slices(word, size, acc, length) when length === size, do: [return_a_combination(size, word) | acc ] |> Enum.reverse()
   defp do_slices(<<_c::utf8, rest::binary>> = word, size, acc, length) do
     do_slices(rest, size, [return_a_combination(size, word) | acc], length - 1)
   end
