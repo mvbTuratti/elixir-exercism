@@ -22,12 +22,16 @@ defmodule Triangle do
 
   def kind(_,_,_), do: {:error, "all side lengths must be positive"}
 
-  defp compare(x, _y, z) when x === z, do: {:error, "side lengths violate triangle inequality"}
-  defp compare(x, y, _z) when x === y, do: {:ok, :isosceles}
-  defp compare(x,y,z) when x > y, do: if y + z >= x, do: {:ok, :scalene}, else: {:error, "side lengths violate triangle inequality"}
-  defp compare(x,y,z), do: if x + z >= y, do: {:ok, :scalene}, else: {:error, "side lengths violate triangle inequality"}
+  defp compare(x, _y, x), do: {:error, "side lengths violate triangle inequality"}
+  defp compare(x, x, _z), do: {:ok, :isosceles}
+  defp compare(x,y,z) do
+    case x + z > y and y + z > x do
+      true ->  {:ok, :scalene}
+      false -> {:error, "side lengths violate triangle inequality"}
+    end
+  end
 
-  defp equals(x,y) when x === y, do: {:ok, :equilateral}
+  defp equals(x,x), do: {:ok, :equilateral}
   defp equals(x,y) when x  > y, do: {:error, "side lengths violate triangle inequality"}
   defp equals(_x,_y), do: {:ok, :isosceles}
 end
