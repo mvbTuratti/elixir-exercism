@@ -25,25 +25,16 @@ defmodule BinarySearch do
 
   defp do_search({}, _left, _right, _key), do: :not_found
 
-  defp do_search(tuple, left, right, key) when right - left == 1 do
-    cond do
-      elem(tuple, left) === key ->
-        {:ok, left}
-      elem(tuple, right) === key ->
-        {:ok, right}
-      true ->
-        :not_found
-    end
-  end
+  defp do_search(_tuple, left, right, _key) when left > right, do: :not_found
   defp do_search(tuple, left, right, key) do
     middle = div(left + right, 2)
     case elem(tuple, middle) do
       ^key ->
         {:ok, middle}
       n when n > key ->
-        do_search(tuple, left, middle, key)
+        do_search(tuple, left, middle - 1, key)
       n when n < key ->
-        do_search(tuple, middle, right, key)
+        do_search(tuple, middle + 1, right, key)
     end
 
   end
