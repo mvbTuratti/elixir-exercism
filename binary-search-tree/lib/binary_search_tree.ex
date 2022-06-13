@@ -18,9 +18,9 @@ defmodule BinarySearchTree do
     case tree[:data] do
       nil ->
         new(data)
-      val when val <= data ->
+      val when val < data ->
         %{tree | right: insert(tree[:right], data)}
-      val when val > data ->
+      val when val >= data ->
         %{tree | left: insert(tree[:left], data)}
     end
   end
@@ -30,17 +30,15 @@ defmodule BinarySearchTree do
   """
   @spec in_order(bst_node) :: [any]
   def in_order(tree) do
-    do_in_order(tree)
+    do_order(tree) |> List.flatten()
   end
 
-
-  defp do_in_order(tree) do
+  defp do_order(tree) do
     case tree[:left] do
       nil ->
-        if tree[:right], do: [tree[:data] | do_in_order(tree[:right])] , else: [tree[:data]]
+        if tree[:right], do: [tree[:data] | [do_order(tree[:right])] ] , else: [tree[:data]]
       val ->
-        do_in_order(val)
+        if tree[:right], do: [do_order(val) |  [tree[:data] | [ do_order(tree[:right])]]], else: [do_order(val) |  [tree[:data]]]
     end
   end
-
 end
