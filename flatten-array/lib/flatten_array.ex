@@ -13,20 +13,28 @@ defmodule FlattenArray do
   """
 
   @spec flatten(list) :: list
-  def flatten(list) do
-    do_flatten(list)
+  def flatten([]), do: []
+  #Simple solution using high level Elixir libs
+  # def flatten(list) do
+  #   List.flatten(list)
+  #   |> Enum.filter(&(&1))
+  # end
+
+  def flatten([head | remainder]) do
+    do_flatten(head, remainder, [])
+    |> Enum.reverse()
   end
 
-  defp do_flatten(list) do
-    for item when item != nil <- list do
-      case item do
-        [_val] ->
-          do_flatten(item)
-        val ->
-          val
-      end
-    end
-  end
-
+  defp do_flatten([], [], acc), do: acc
+  defp do_flatten([], [h | t], acc), do: do_flatten(h, t, acc)
+  defp do_flatten(nil, [], acc), do: acc
+  defp do_flatten(nil, [h | t], acc), do: do_flatten(h, t, acc)
+  defp do_flatten([nil], [], acc), do: acc
+  defp do_flatten([nil | [h | []]], r, acc), do: do_flatten(h, r, acc)
+  defp do_flatten([nil | [h | t]], r, acc), do: do_flatten(h, [t | r], acc)
+  defp do_flatten([h | []], r, acc), do: do_flatten(h, r, acc)
+  defp do_flatten([h | t], r, acc), do: do_flatten(h, [t | r], acc)
+  defp do_flatten(v, [], acc), do: [v | acc]
+  defp do_flatten(v, [h | t], acc), do: do_flatten(h, t, [v | acc])
 
 end
