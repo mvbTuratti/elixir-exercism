@@ -9,7 +9,7 @@ defmodule Matrix do
   def from_string(input) when is_binary(input) do
     lines = input
             |> String.split("\n")
-            |> Enum.map(fn x -> String.split(x," ") |> Enum.map(&(String.to_integer(&1))) end)
+            |> Enum.map(fn x -> String.split(x," ") |> Enum.map(&(String.to_integer/1)) end)
     cols = lines |> Enum.zip_with(&(&1))
     %Matrix{matrix: %{rows: lines, cols: cols, str: input}}
   end
@@ -35,7 +35,7 @@ defmodule Matrix do
   Given a `matrix` and `index`, return the row at `index`.
   """
   @spec row(matrix :: %Matrix{}, index :: integer) :: list(integer)
-  def row(%{matrix: %{rows: rows}}, index) when is_integer(index) and index >= 0 do
+  def row(%{matrix: %{rows: rows}}, index) when is_integer(index) and index >= 1 do
     rows
     |> Enum.at(index - 1)
   end
@@ -52,7 +52,7 @@ defmodule Matrix do
   Given a `matrix` and `index`, return the column at `index`.
   """
   @spec column(matrix :: %Matrix{}, index :: integer) :: list(integer)
-  def column(%{matrix: %{cols: cols}}, index) when is_integer(index) and index >= 0 do
+  def column(%{matrix: %{cols: cols}}, index) when is_integer(index) and index >= 1 do
     cols
     |> Enum.at(index - 1)
   end
