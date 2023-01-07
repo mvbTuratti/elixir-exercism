@@ -1,5 +1,5 @@
 defmodule Allergies do
-  use Bitwise
+  import Bitwise
   @doc """
   List the allergies for which the corresponding flag bit is true.
   """
