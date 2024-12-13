@@ -17,7 +17,7 @@ defmodule Series do
           current_size = :queue.len(new_queue)
           case current_size === size do
             true ->
-              value = :queue.to_list(new_queue) |> Enum.reduce(1, &(&1 * &2))
+              value = :queue.to_list(new_queue) |> Enum.reduce(1, &*/2)
               new_top_value = if value > top_value, do: value, else: top_value
               {new_top_value, :queue.drop(new_queue), size}
             false ->
